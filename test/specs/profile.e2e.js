@@ -83,7 +83,7 @@ describe("Profile Module", () => {
     await browser.pause(1000);
   });
   //
-  // TC-PROFILE 03 - Update avatar successfully
+  // TC-PROFILE 03 - Upload avatar successfully
   //
   it("TC-Profile03 - Upload avatar successfully", async () => {
     // 1. Đi đến trang Edit Profile
@@ -352,7 +352,6 @@ describe("Profile Module", () => {
     assert.equal(await fullNameInput.getValue(), longName);
 
     await $('button[type="submit"]').click();
-
     await browser.waitUntil(
       async () => (await browser.getUrl()).includes("/profile"),
       { timeout: 5000, timeoutMsg: "Page did not reload to Profile" }
@@ -525,7 +524,9 @@ describe("Profile Module", () => {
     await newPassword.setValue("123456Bn#");
     await confirmNewPassword.setValue("");
     await $("button.save-btn").click();
-    const errorMsg = $('//*[contains(text(),"New password can not be empty")]');
+    const errorMsg = $(
+      '//*[contains(text(),"Confirm new password can not be empty")]'
+    );
 
     await browser.waitUntil(async () => await errorMsg.isDisplayed(), {
       timeout: 5000,
@@ -823,7 +824,7 @@ describe("Profile Module", () => {
   //
   // TC-PROFILE 22 -  Full fields is empty →  MSG023, MSG026, MSG025
   //
-  it("TC-Profile22 - Full fields is empty →  MSG023, MSG026, MSG025 ", async () => {
+  it("TC-Profile22 - Full fields is empty → MSG023, MSG026, MSG025", async () => {
     await browser.url("/profile");
     await $(".edit-btn").click();
 
@@ -833,27 +834,39 @@ describe("Profile Module", () => {
     await changePasswordBtn.click();
 
     const currentPassword = $(
-      "#root > div > div.page-content > div > div > div.tab-content > form > div.form-grid > div:nth-child(1) > input[type=password] "
+      "#root > div > div.page-content > div > div > div.tab-content > form > div.form-grid > div:nth-child(1) > input[type=password]"
     );
     const newPassword = $(
-      "#root > div > div.page-content > div > div > div.tab-content > form > div.form-grid > div:nth-child(2) > input[type=password] "
+      "#root > div > div.page-content > div > div > div.tab-content > form > div.form-grid > div:nth-child(2) > input[type=password]"
     );
     const confirmNewPassword = $(
-      "#root > div > div.page-content > div > div > div.tab-content > form > div.form-grid > div:nth-child(3) > input[type=password] "
+      "#root > div > div.page-content > div > div > div.tab-content > form > div.form-grid > div:nth-child(3) > input[type=password]"
     );
 
     await currentPassword.setValue("");
     await newPassword.setValue("");
     await confirmNewPassword.setValue("");
     await $("button.save-btn").click();
-    const errorMsg = $(
-      '//*[contains(text(),"Password and Confirm Password do not match")]'
+
+    const msg023 = $(
+      '//*[contains(text(),"Current password can not be empty")]'
+    );
+    const msg025 = $('//*[contains(text(),"New password can not be empty")]');
+    const msg026 = $(
+      '//*[contains(text(),"Confirm new password can not be empty")]'
     );
 
-    await browser.waitUntil(async () => await errorMsg.isDisplayed(), {
-      timeout: 5000,
-      timeoutMsg: "MSG0023, MSG026, MSG025  did not appear",
-    });
+    await browser.waitUntil(
+      async () =>
+        (await msg023.isDisplayed()) &&
+        (await msg025.isDisplayed()) &&
+        (await msg026.isDisplayed()),
+      {
+        timeout: 5000,
+        timeoutMsg: "MSG023, MSG025, MSG026 did not appear",
+      }
+    );
+
     await browser.pause(1000);
   });
   //

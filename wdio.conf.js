@@ -132,6 +132,10 @@ exports.config = {
     timeout: 60000,
   },
 
+  beforeCommand: async function () {
+    await browser.pause(250); // mỗi step chậm 0.25 giây
+  },
+
   //
   // =====
   // Hooks
