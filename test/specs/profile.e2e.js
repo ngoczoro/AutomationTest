@@ -916,4 +916,109 @@ describe("Profile Module", () => {
 
     await browser.pause(1000);
   });
+  //
+  // TC-PROFILE 24 - View personal playlists
+  //
+  it("TC-Profile24 - User can view personal playlists on Profile page", async () => {
+    await browser.url("/profile");
+    assert((await browser.getUrl()).includes("/profile"));
+
+    // Click Playlists tab
+    const playlistTab = $("button.profile-tab.active");
+    if (await playlistTab.isExisting()) {
+      await playlistTab.click();
+    }
+
+    // Chờ playlist list hiển thị
+    const playlists = $$(".profile-content > div");
+
+    await browser.waitUntil(async () => (await playlists.length) > 0, {
+      timeout: 5000,
+      timeoutMsg: "Personal playlists not displayed",
+    });
+
+    // Verify mỗi playlist có tên + ảnh
+    const firstPlaylist = playlists[0];
+    await firstPlaylist.$(".profile-content h3").waitForDisplayed();
+    await firstPlaylist.$(".profile-content img").waitForDisplayed();
+
+    await browser.pause(1000);
+  });
+  //
+  // TC-PROFILE 26 - View favorite songs list
+  //
+  it("TC-Profile26 - User can view favorite songs list", async () => {
+    await browser.url("/profile");
+    assert((await browser.getUrl()).includes("/profile"));
+
+    // Click Favorites song tab
+    const playlistTab = $(".profile-tabs > button:nth-child(2)");
+    if (await playlistTab.isExisting()) {
+      await playlistTab.click();
+    }
+
+    // Chờ favorite songs list hiển thị
+    const favoriteSongs = $$(".profile-content > div");
+
+    await browser.waitUntil(async () => (await favoriteSongs.length) > 0, {
+      timeout: 5000,
+      timeoutMsg: "Favorite songs list not displayed",
+    });
+
+    // Verify mỗi favorite song có tên + ảnh
+    const firstFavoriteSong = favoriteSongs[0];
+    await firstFavoriteSong
+      .$(".profile-content .song-info .song-title")
+      .waitForDisplayed();
+    await firstFavoriteSong
+      .$(".profile-content .song-cover img")
+      .waitForDisplayed();
+    await firstFavoriteSong
+      .$(".profile-content .song-info .song-artist")
+      .waitForDisplayed();
+    await browser.pause(1000);
+  });
+  //
+  // TC-PROFILE 28 - View artists list
+  //
+  it("TC-Profile28 - User can view artists list", async () => {
+    // 1. Mở trang Profile
+    await browser.url("/profile");
+    assert((await browser.getUrl()).includes("/profile"));
+
+    // 2. Click tab Artists (tab thứ 3)
+    const artistsTab = $(".profile-tabs > button:nth-child(3)");
+    await artistsTab.waitForClickable({ timeout: 3000 });
+    await artistsTab.click();
+
+    // 3. Chờ container nội dung hiển thị
+    const contentContainer = $(".profile-content");
+    await contentContainer.waitForDisplayed({ timeout: 5000 });
+
+    // 4. Chờ có ít nhất 1 artist card
+    await browser.waitUntil(
+      async () => {
+        const artists = await $$(".profile-content > div");
+        return artists.length > 0;
+      },
+      {
+        timeout: 5000,
+        timeoutMsg: "Artists list not displayed",
+      }
+    );
+
+    // 5. Verify artist đầu tiên có avatar + name
+    const artists = await $$(".profile-content > div");
+    const firstArtist = artists[0];
+
+    // Avatar
+    const artistAvatar = await firstArtist.$("img");
+    await artistAvatar.waitForDisplayed({ timeout: 3000 });
+
+    // Artist name
+    const artistName = await firstArtist.$("h3");
+    await artistName.waitForDisplayed({ timeout: 3000 });
+
+    await browser.pause(1000);
+  });
 });
